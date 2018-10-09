@@ -6,17 +6,38 @@ var series = require('../controllers/seriesController')
 router.route('/:id?')
   .get((req,res,next) => {
     let id = req.params.id
-    res.json(series.getSeries(id))
+    series.getSeries(id, (err, data) => {
+      if(err)
+        res.status(err).json(data)
+      else
+        res.status(200).json(data)
+    })
   })
   .post((req,res,next) => {
-    res.json(series.postSerie(req.body.serie))
+    series.postSerie(req.body.serie, (err, data) => {
+      if(err)
+        res.status(err).json(data)
+      else
+        res.status(201).json(data)
+    })
   })
   .put((req,res,next) => {
     let id = req.params.id
-    res.json(series.updateSerie(id,req.body.serie))
+    series.updateSerie(id,req.body.serie, (err, data) => {
+      if(err)
+        res.status(err).json(data)
+      else
+        res.status(204).json(data)
+    })
   })
   .delete((req,res,next) => {
-    res.json(series.deleteSerie(id))
+    let id = req.params.id
+    series.deleteSerie(id, (err, data) => {
+      if(err)
+        res.status(err).json(data)
+      else
+        res.status(204).json(data)
+    })
   })
 
 module.exports = router;

@@ -1,5 +1,4 @@
 const uuidv4 = require('uuid');
-const handleResponse = require('./messageController')
 var expressValidator = require('validator');
 
 var series = [
@@ -37,42 +36,66 @@ var series = [
     }
 ]
 
-module.exports.getSeries = function(id){
+module.exports.getSeries = function(id, callback){
     if(!id){
-        return handleResponse(200,series);
+        callback(null, series)
+        return
     }
     let objReturn = series.filter(serie => serie.id == id);
 
     if(!objReturn.length) {
-        return handleResponse(404,'Item not found')
+        callback(404,'')
+        return
     }
-    return handleResponse(200,series.filter(serie => serie.id == id));
+    callback(null, objReturn);
 }
 
-module.exports.postSerie = function(jsSerie){
+module.exports.postSerie = function(jsSerie, callback){
     if(!jsSerie) {    
-        return handleResponse(400,'Item to be stored was not sent.')
+        callback(400,'')
+        return
     }
     
-    series.push(jsSerie)
-    return handleResponse(201,'Item stored succesuccessfully')
+    jsSerie.id = uuidv4();
+    series.push(jsSerie);
+    callback(null,{message: 'Item stored successfully', id: jsSerie.id});
 }
 
-module.exports.updateSerie = function(id, jsSerie){
+module.exports.updateSerie = function(id, jsSerie, callback){
     if(!id){
-        return handleResponse(400,'Item to be updated was not sent.')
+        callback(400,'')
+        return
     }
 
     let index
-    index = newSeries.map(serie => serie.id).indexOf(action.serie.id);
+    index = series.map(serie => serie.id).indexOf(id);
 
     if(index < 0) {
-        return handleResponse(404,'Item not found')
+        callback(404,'')
+        return
     }
-
-    newSeries[index] = jsSerie
+    
+    jsSerie.id = id;
+    series[index] = jsSerie;
+    callback(null,'')
 }
 
-module.exports.deleteSerie = function(id){
-    
+module.exports.deleteSerie = function(id, callback){
+    console.log(id)
+    if(!id){
+        callback(404,'')
+        return
+    }
+
+    let index
+    index = series.map(serie => serie.id).indexOf(id);
+    console.log(index)
+    if(index < 0) {
+        callback(404,'')
+        return
+    }
+
+    series.splice(index,1);
+
+    callback(null,'')
 }
