@@ -62,9 +62,9 @@ module.exports.postSerie = function(jsSerie, callback){
         return
     }
     
-    jsSerie.id = uuidv4();
-    series.push(jsSerie);
-    callback(null,{message: 'Item stored successfully', id: jsSerie.id});
+    mongoClient.insertElement("SeriesTV",jsSerie,(insertedId) =>{
+        callback(null,{message: 'Item stored successfully', id: insertedId});
+    })
 }
 
 module.exports.updateSerie = function(id, jsSerie, callback){
@@ -87,21 +87,16 @@ module.exports.updateSerie = function(id, jsSerie, callback){
 }
 
 module.exports.deleteSerie = function(id, callback){
-    console.log(id)
     if(!id){
-        callback(404,'')
+        callback(400,'')
         return
     }
 
-    let index
-    index = series.map(serie => serie.id).indexOf(id);
-    console.log(index)
-    if(index < 0) {
-        callback(404,'')
-        return
-    }
-
-    series.splice(index,1);
-
-    callback(null,'')
+    mongoClient.deleteElement('SeriesTV', id, (blnResponse) => {
+        if (blnResponse){
+            callback(null,'')   
+        } else {
+            callback(404,'')
+        }
+    })
 }
