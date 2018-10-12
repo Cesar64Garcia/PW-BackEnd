@@ -1,5 +1,5 @@
 const uuidv4 = require('uuid');
-var expressValidator = require('validator');
+const mongoClient = require('./MongoController')
 
 var series = [
     {
@@ -37,17 +37,23 @@ var series = [
 ]
 
 module.exports.getSeries = function(id, callback){
+    let objReturn
+    
     if(!id){
-        callback(null, series)
+        mongoClient.findAllElements('SeriesTV',(data) => {
+            callback(null, data)
+        })
         return
     }
-    let objReturn = series.filter(serie => serie.id == id);
 
-    if(!objReturn.length) {
-        callback(404,'')
+    mongoClient.findElementForId('SeriesTV', id,(data) => {
+        if (!data.length){
+            callback(404,'')
+        } else {
+            callback(null, data)
+        }
         return
-    }
-    callback(null, objReturn);
+    })
 }
 
 module.exports.postSerie = function(jsSerie, callback){
