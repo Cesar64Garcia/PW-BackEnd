@@ -1,5 +1,6 @@
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
+const ObjectId = require('mongodb').ObjectID;
 const uuidv4 = require('uuid');
  
 // Connection URL
@@ -16,26 +17,22 @@ module.exports.findAllElements = function(strCollection, callback) {
         const collection = db.collection(strCollection);
 
         collection.find({}).toArray(function(err, docs) {
-            assert.equal(err, null);
             client.close();
-            callback(docs)
+            callback(err, docs)
         });
     });
 }
 
 //Sends throw the callback an array with the element that match with the id specified in the collection
-module.exports.findElementForId = function(strCollection, strUid, callback) {
+module.exports.findElementForId = function(strCollection, id, callback) {
     MongoClient.connect(url, function(err, client) {
         assert.equal(null, err);
         
         const db = client.db(dbName);
 
         const collection = db.collection(strCollection);
-        collection.find({'uid': strUid}).toArray(function(err, docs) {
-            assert.equal(err, null);
-            console.log(docs)
-            client.close();
-            callback(docs);
+        collection.find({'_id': ObjectId(id)}).toArray(function(err, docs) {
+            callback(err, docs);
         });
     });
 }
@@ -49,21 +46,16 @@ module.exports.insertElement = function(strCollection, objElement, callback) {
         const db = client.db(dbName);
 
         const collection = db.collection(strCollection);
-        objElement.uid = uuidv4();
 
         collection.insertMany([objElement], function(err, result) {
-            assert.equal(err, null);
-            assert.equal(1, result.result.n);
-            assert.equal(1, result.ops.length);
             client.close();
-            console.log(result)
-            callback(objElement.uid)
+            callback(err, result.ops[0]._id)
         });
     });
 }
 
-//Delete the element from the mongoDb collection where the uid match with the strUid
-module.exports.deleteElement = function(strCollection, strUid, callback) {
+//Delete the element from a mongoDb collection where the uid match with the strUid
+module.exports.deleteElement = function(strCollection, id, callback) {
     MongoClient.connect(url, function(err, client) {
         assert.equal(null, err);
         
@@ -71,14 +63,34 @@ module.exports.deleteElement = function(strCollection, strUid, callback) {
 
         const collection = db.collection(strCollection);
 
-        collection.deleteOne({'uid': strUid}, function(err, result) {
-            assert.equal(err, null);
-            assert.equal(1, result.result.n);
-            callback(true);
-          }); 
+        collection.deleteOne({'_id': ObjectId(id)}, function(err, result) {
+            if (result.result.n > 0){
+                callback(err, true)
+            } else {
+                callback(err, false)
+            }
+            client.close();
+        }); 
     });
 }
 
-module.exports.updateElement = function(strCollection, strUid, objNewElement, callback){
-    
+//Update the complete element from a mongoDb collection where the uid match with the strUid
+module.exports.updateElement = function(strCollection, id, objNewElement, callback){
+    MongoClient.connect(url, function(err, client) {
+        assert.equal(null, err);
+        
+        const db = client.db(dbName);
+
+        const collection = db.collection(strCollection);
+
+        collection.updateOne({'_id': ObjectId(id)}, { $set: objNewElement }, function(err, result) {
+            if (result.result.n > 0){
+                callback(err, true)
+            } else {
+                callback(err, false)
+            }
+
+            client.close();
+        });          
+    });
 }

@@ -6,7 +6,7 @@ var series = require('../controllers/seriesController')
 router.route('/:id?')
   .get((req,res,next) => {
     let id = req.params.id
-    series.getSeries(id, (err, data, message) => {
+    series.getSeries(id, (err, data) => {
       if(err)
         res.status(err).json(data)
       else
