@@ -10,7 +10,7 @@ const dbName = 'Entretenimiento';
 //Sends throw the callback an array with all the elements in the collection
 module.exports.findAllElements = function(strCollection, callback) {
     MongoClient.connect(url, function(err, client) {
-        assert.equal(null, err);
+        if(err) return callback(500,'')
         
         const db = client.db(dbName);
 
@@ -26,7 +26,7 @@ module.exports.findAllElements = function(strCollection, callback) {
 //Sends throw the callback an array with the element that match with the id specified in the collection
 module.exports.findElementForId = function(strCollection, id, callback) {
     MongoClient.connect(url, function(err, client) {
-        assert.equal(null, err);
+        if(err) return callback(500,'')
         
         const db = client.db(dbName);
 
@@ -41,8 +41,8 @@ module.exports.findElementForId = function(strCollection, id, callback) {
 //The method returns the id throw the callback
 module.exports.insertElement = function(strCollection, objElement, callback) {
     MongoClient.connect(url, function(err, client) {
-        assert.equal(null, err);
-        
+        if(err) return callback(500,'')
+       
         const db = client.db(dbName);
 
         const collection = db.collection(strCollection);
@@ -57,7 +57,7 @@ module.exports.insertElement = function(strCollection, objElement, callback) {
 //Delete the element from a mongoDb collection where the uid match with the strUid
 module.exports.deleteElement = function(strCollection, id, callback) {
     MongoClient.connect(url, function(err, client) {
-        assert.equal(null, err);
+        if(err) return callback(500,'')
         
         const db = client.db(dbName);
 
@@ -77,7 +77,7 @@ module.exports.deleteElement = function(strCollection, id, callback) {
 //Update the complete element from a mongoDb collection where the uid match with the strUid
 module.exports.updateElement = function(strCollection, id, objNewElement, callback){
     MongoClient.connect(url, function(err, client) {
-        assert.equal(null, err);
+        if(err) return callback(500,'')
         
         const db = client.db(dbName);
 
