@@ -7,7 +7,7 @@ module.exports.getSeries = function(id, callback){
     if(!id){
         mongoClient.findAllElements('SeriesTV',(err, data) => {
             if(err) {
-                callback(500,null)
+                callback(500,'')
             } else {
                 callback(null, data)
             }
