@@ -28,6 +28,8 @@ module.exports.findElementForId = function(strCollection, id, callback) {
     MongoClient.connect(url, function(err, client) {
         if(err) return callback(500,'')
         
+        if (!ObjectId.isValid(id)) return callback(400, [])
+
         const db = client.db(dbName);
 
         const collection = db.collection(strCollection);
@@ -58,6 +60,8 @@ module.exports.insertElement = function(strCollection, objElement, callback) {
 module.exports.deleteElement = function(strCollection, id, callback) {
     MongoClient.connect(url, function(err, client) {
         if(err) return callback(500,'')
+
+        if (!ObjectId.isValid(id)) return callback(400, false)
         
         const db = client.db(dbName);
 
@@ -78,6 +82,8 @@ module.exports.deleteElement = function(strCollection, id, callback) {
 module.exports.updateElement = function(strCollection, id, objNewElement, callback){
     MongoClient.connect(url, function(err, client) {
         if(err) return callback(500,'')
+
+        if(!ObjectId.isValid(id)) return callback(400,false)
         
         const db = client.db(dbName);
 
