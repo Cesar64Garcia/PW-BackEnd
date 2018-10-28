@@ -1,43 +1,75 @@
 var express = require('express');
 var router = express.Router();
-var series = require('../controllers/seriesController')
+var series = require('../controllers/seriesController');
+var cache = require('express-redis-cache')();
+
+cache.on('error', function (error) {
+  console.log('Cache error!' + error);
+  return
+});
+
 
 /* GET home page. */
-router.route('/:id?')
-  .get((req,res,next) => {
-    let id = req.params.id
+router.get('/', cache.route({ expire: 60, name: 'getAll' }), (req, res, next) => {
+  series.getSeries(null, (err, data) => {
+    if (err)
+      res.status(err).json(data)
+    else
+      res.status(200).json(data)
+  })
+});
+
+router.get('/:id',
+  (req, res, next) => {
+    // set cache name
+    res.express_redis_cache_name = 'getOne-' + req.params.id;
+    next();
+  },
+  cache.route(60),
+  (req, res, next) => {
+    const { id } = req.params
     series.getSeries(id, (err, data) => {
-      if(err)
+      if (err)
         res.status(err).json(data)
       else
         res.status(200).json(data)
     })
-  })
-  .post((req,res,next) => {
-    series.postSerie(req.body.serie, (err, data) => {
-      if(err)
-        res.status(err).json(data)
-      else
+  }
+);
+
+router.post('/', (req, res, next) => {
+  series.postSerie(req.body.serie, (err, data) => {
+    if (err)
+      res.status(err).json(data)
+    else
+      cache.del('getAll', (err, del) => {
         res.status(201).json(data)
-    })
+      });
   })
-  .put((req,res,next) => {
-    let id = req.params.id
-    series.updateSerie(id,req.body.serie, (err, data) => {
-      if(err)
-        res.status(err).json(data)
-      else
+});
+
+router.put('/:id', (req, res, next) => {
+  const { id } = req.params
+  series.updateSerie(id, req.body.serie, (err, data) => {
+    if (err)
+      res.status(err).json(data)
+    else
+      cache.del('getOne-' + id, (err, del) => {
         res.status(204).json(data)
-    })
+      });
   })
-  .delete((req,res,next) => {
-    let id = req.params.id
-    series.deleteSerie(id, (err, data) => {
-      if(err)
-        res.status(err).json(data)
-      else
+});
+
+router.delete('/:id', (req, res, next) => {
+  const { id } = req.params
+  series.deleteSerie(id, (err, data) => {
+    if (err)
+      res.status(err).json(data)
+    else
+      cache.del('getOne-' + id, (err, del) => {
         res.status(204).json(data)
-    })
+      });
   })
+});
 
 module.exports = router;

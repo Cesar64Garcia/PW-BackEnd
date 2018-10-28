@@ -1,7 +1,7 @@
 const uuidv4 = require('uuid');
 const mongoClient = require('./MongoController')
 
-module.exports.getSeries = function(id, callback){
+getSeries = function(id, callback){
     let objReturn
     
     if(!id){
@@ -25,7 +25,7 @@ module.exports.getSeries = function(id, callback){
     })
 }
 
-module.exports.postSerie = function(jsSerie, callback){
+postSerie = function(jsSerie, callback){
     if(!jsSerie) {    
         callback(400,'')
         return
@@ -36,7 +36,7 @@ module.exports.postSerie = function(jsSerie, callback){
     })
 }
 
-module.exports.updateSerie = function(id, jsSerie, callback){
+updateSerie = function(id, jsSerie, callback){
     if(!id){
         callback(400,'')
         return
@@ -51,7 +51,7 @@ module.exports.updateSerie = function(id, jsSerie, callback){
     });
 }
 
-module.exports.deleteSerie = function(id, callback){
+deleteSerie = function(id, callback){
     if(!id){
         callback(400,'')
         return
@@ -64,4 +64,11 @@ module.exports.deleteSerie = function(id, callback){
             callback(404,'')
         }
     })
+}
+
+module.exports = {
+    getSeries,
+    postSerie,
+    updateSerie,
+    deleteSerie
 }
