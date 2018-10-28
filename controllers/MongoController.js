@@ -88,6 +88,8 @@ module.exports.updateElement = function(strCollection, id, objNewElement, callba
         const db = client.db(dbName);
 
         const collection = db.collection(strCollection);
+        
+        objNewElement._id = ObjectId(id);
 
         collection.updateOne({'_id': ObjectId(id)}, { $set: objNewElement }, function(err, result) {
             if (result.result.n > 0){

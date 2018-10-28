@@ -54,8 +54,10 @@ router.put('/:id', (req, res, next) => {
     if (err)
       res.status(err).json(data)
     else
-      cache.del('getOne-' + id, (err, del) => {
-        res.status(204).json(data)
+      cache.del('getAll', (err, del) => {
+        cache.del('getOne-' + id, (err, del) => {
+          res.status(204).json(data)
+        })
       });
   })
 });
@@ -66,8 +68,10 @@ router.delete('/:id', (req, res, next) => {
     if (err)
       res.status(err).json(data)
     else
-      cache.del('getOne-' + id, (err, del) => {
-        res.status(204).json(data)
+      cache.del('getAll', (err, del) => {
+        cache.del('getOne-' + id, (err, del) => {
+          res.status(204).json(data)
+        })
       });
   })
 });
