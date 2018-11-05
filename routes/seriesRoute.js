@@ -1,7 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var series = require('../controllers/seriesController');
-var cache = require('express-redis-cache')();
+var cache = require('express-redis-cache')({
+  host: 'redis-host', port: 6379
+});
 
 cache.on('error', function (error) {
   console.log('Cache error!' + error);
