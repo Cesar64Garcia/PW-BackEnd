@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  redis:
+    image: redis
+    container_name: pg_redis
+    ports:
+    - "6379:6379"
+  mongo:
+    image: mongo
+    container_name: pg_mongo
+    ports:
+    - "27000:27017"
+    volumes:
+    - data:/var/lib/mongo/data
+  express:
+    image: express
+    container_name: pg_express
+    ports:
+    - "3333:3333"
+    links:
+    - "redis:redis-host"
+    - "mongo:mongo-host"
+  react-app:
+    image: react-app
+    container_name: pg_react
+    ports:
+    - "80:5000"
+    links:
+    - "express:express-host"
+volumes:
+  data: {}
