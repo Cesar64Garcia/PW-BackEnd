@@ -11,8 +11,7 @@ const dbName = 'Entretenimiento';
 module.exports.findAllElements = function(strCollection, callback) {
     MongoClient.connect(url, function(err, client) {
         if (err) {
-            console.error(err)
-            callback(500, '')
+            callback(500, 'Ocurrio un error desconocido al intentar accesar a la base de datos.')
             return;
         }
         
@@ -30,7 +29,7 @@ module.exports.findAllElements = function(strCollection, callback) {
 //Sends throw the callback an array with the element that match with the id specified in the collection
 module.exports.findElementForId = function(strCollection, id, callback) {
     MongoClient.connect(url, function(err, client) {
-        if(err) return callback(500,'')
+        if (err) return callback(500, 'Ocurrio un error desconocido al intentar accesar a la base de datos.')
         
         if (!ObjectId.isValid(id)) return callback(400, [])
 
@@ -96,7 +95,7 @@ module.exports.updateElement = function(strCollection, id, objNewElement, callba
     MongoClient.connect(url, function(err, client) {
         if(err) { 
             console.error(err)
-            callback(500,'')
+            callback(500, 'Ocurrio un error desconocido al intentar accesar a la base de datos.')
             return;
         }
 

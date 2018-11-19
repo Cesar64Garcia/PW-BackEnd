@@ -7,7 +7,7 @@ getSeries = function(id, callback){
     if(!id){
         mongoClient.findAllElements('SeriesTV',(err, data) => {
             if(err) {
-                callback(500,'')
+                callback(500, 'Ocurrio un error desconocido al intentar accesar a la base de datos.')
             } else {
                 callback(null, data)
             }
@@ -17,7 +17,7 @@ getSeries = function(id, callback){
 
     mongoClient.findElementForId('SeriesTV', id, (err, data) => {
         if (!data.length){
-            callback(404,'')
+            callback(404,'El item buscado no fue encontrado.')
         } else {
             callback(null, data)
         }
@@ -27,7 +27,7 @@ getSeries = function(id, callback){
 
 postSerie = function(jsSerie, callback){
     if(!jsSerie) {    
-        callback(400,'')
+        callback(400,'Por favor enviar una solicitud válida.')
         return
     }
     
@@ -38,30 +38,30 @@ postSerie = function(jsSerie, callback){
 
 updateSerie = function(id, jsSerie, callback){
     if(!id){
-        callback(400,'')
+        callback(400,'Por favor enviar un id válido.')
         return
     }
 
     mongoClient.updateElement('SeriesTV', id, jsSerie, (err,blnResult) =>{
         if (blnResult) {
-            callback(null,'')
+            callback(null,'Item actualizado correctamente.')
         } else {
-            callback(404,'')
+            callback(404, 'El item buscado no fue encontrado.')
         }
     });
 }
 
 deleteSerie = function(id, callback){
     if(!id){
-        callback(400,'')
+        callback(400,'Por favor enviar un id válido.')
         return
     }
 
     mongoClient.deleteElement('SeriesTV', id, (err, blnResponse) => {
         if (blnResponse){
-            callback(null,'')   
+            callback(null,'Item eliminado correctamente')   
         } else {
-            callback(404,'')
+            callback(404, 'El item buscado no fue encontrado.')
         }
     })
 }
